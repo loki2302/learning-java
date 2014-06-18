@@ -3,6 +3,7 @@ package me.loki2302;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,5 +25,17 @@ public class ByteBufferTest {
         assertEquals((short)3, byteBuffer2.getShort());
         assertEquals(4, byteBuffer2.getInt());
         assertEquals(5L, byteBuffer2.getLong());
+    }
+
+    @Test
+    public void canUserBigEndian() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+        byteBuffer.order(ByteOrder.BIG_ENDIAN);
+        byteBuffer.putInt(0xaabbccdd);
+        byte[] array = byteBuffer.array();
+        assertEquals((byte)0xaa, array[0]);
+        assertEquals((byte)0xbb, array[1]);
+        assertEquals((byte)0xcc, array[2]);
+        assertEquals((byte)0xdd, array[3]);
     }
 }
