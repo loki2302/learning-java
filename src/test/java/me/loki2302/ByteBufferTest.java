@@ -28,7 +28,7 @@ public class ByteBufferTest {
     }
 
     @Test
-    public void canUserBigEndian() {
+    public void canUseBigEndian() {
         ByteBuffer byteBuffer = ByteBuffer.allocate(4);
         byteBuffer.order(ByteOrder.BIG_ENDIAN);
         byteBuffer.putInt(0xaabbccdd);
@@ -37,5 +37,17 @@ public class ByteBufferTest {
         assertEquals((byte)0xbb, array[1]);
         assertEquals((byte)0xcc, array[2]);
         assertEquals((byte)0xdd, array[3]);
+    }
+
+    @Test
+    public void canUseLittleEndian() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        byteBuffer.putInt(0xaabbccdd);
+        byte[] array = byteBuffer.array();
+        assertEquals((byte)0xdd, array[0]);
+        assertEquals((byte)0xcc, array[1]);
+        assertEquals((byte)0xbb, array[2]);
+        assertEquals((byte)0xaa, array[3]);
     }
 }
