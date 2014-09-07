@@ -1,0 +1,9 @@
+<taglib>
+    <tlib-version>1.0</tlib-version>
+    <jsp-version>2.3.1</jsp-version>
+    <tag>
+        <name>helloWorld</name>
+        <tag-class>me.loki2302.HelloWorldTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
+</taglib>
