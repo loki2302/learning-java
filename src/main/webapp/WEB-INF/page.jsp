@@ -20,5 +20,6 @@ String time = (String)request.getAttribute("currentTime");
         </c:forEach>
         </ul>
         <m:helloWorld />
+        <m:helloWorld message="I am HelloWorldTag with custom message" />
     </body>
 </html>
