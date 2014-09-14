@@ -64,7 +64,7 @@ public class GuavaControllerReader implements ControllerReader {
     private ParameterInfo getParameterInfo(Parameter parameter) {
         ParameterInfo parameterInfo = new ParameterInfo();
         Path path = parameter.getAnnotation(Path.class);
-        if(path != null ){
+        if(path != null) {
             parameterInfo.isPathParam = true;
             parameterInfo.name = path.value();
             parameterInfo.type = parameter.getType().getRawType();
