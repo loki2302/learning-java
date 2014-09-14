@@ -1,11 +1,16 @@
 package me.loki2302;
 
+import me.loki2302.annotations.Path;
+import me.loki2302.annotations.Query;
+import me.loki2302.annotations.RequestMapping;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JavaReflectionControllerReader {
+public class JavaReflectionControllerReader implements ControllerReader {
+    @Override
     public ControllerInfo getControllerInfo(Class<?> controllerClass) {
         ControllerInfo controllerInfo = new ControllerInfo();
         controllerInfo.controllerClass = controllerClass;
