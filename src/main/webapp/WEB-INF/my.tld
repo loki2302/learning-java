@@ -9,4 +9,12 @@
             <name>message</name>
         </attribute>
     </tag>
+    <tag>
+        <name>url</name>
+        <tag-class>me.loki2302.UrlProviderTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>where</name>
+        </attribute>
+    </tag>
 </taglib>

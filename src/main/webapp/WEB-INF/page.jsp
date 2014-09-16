@@ -15,6 +15,12 @@ String time = (String)request.getAttribute("currentTime");
         <h1>Hello JSP!</h1>
         <h2>Time is <%= time %></h2>
         <h3>Time is ${currentTime}</h3>
+
+        <h5>Accessing service</h5>
+        <p><%= ((me.loki2302.DummyJspServlet.Calculator)request.getAttribute("calculator")).addNumbers(1, 2) %></p>
+        <p>Link to Google: <a href="<m:url where="google" />">Google</a></p>
+        <p>Link to Microsoft: <a href="<m:url where="microsoft" />">Microsoft</a></p>
+
         <ul>
         <c:forEach var="thing" items="${things}">
             <li>${thing}</li>

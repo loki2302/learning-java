@@ -22,6 +22,9 @@ public class DummyJspServlet extends HttpServlet {
                 person("omg", 222)
         ));
 
+        req.setAttribute("calculator", new Calculator());
+        req.setAttribute("urlProvider", new UrlProvider());
+
         req.getRequestDispatcher("/WEB-INF/page.jsp").forward(req, resp);
     }
 
@@ -50,6 +53,18 @@ public class DummyJspServlet extends HttpServlet {
 
         public void setAge(int age) {
             this.age = age;
+        }
+    }
+
+    public static class Calculator {
+        public int addNumbers(int a, int b) {
+            return a + b;
+        }
+    }
+
+    public static class UrlProvider {
+        public String makeUrl(String where) {
+            return String.format("http://www.%s.com/", where);
         }
     }
 }
