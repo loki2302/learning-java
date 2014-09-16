@@ -15,6 +15,41 @@ public class DummyJspServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("currentTime", new Date().toString());
         req.setAttribute("things", Arrays.asList("Thing one", "Thing two", "Thing three"));
+
+        req.setAttribute("people", Arrays.asList(
+                person("loki2302", 10),
+                person("qwerty", 13),
+                person("omg", 222)
+        ));
+
         req.getRequestDispatcher("/WEB-INF/page.jsp").forward(req, resp);
+    }
+
+    private static Person person(String name, int age) {
+        Person person = new Person();
+        person.setName(name);
+        person.setAge(age);
+        return person;
+    }
+
+    public static class Person {
+        private String name;
+        private int age;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
     }
 }
