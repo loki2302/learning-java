@@ -32,5 +32,27 @@ String time = (String)request.getAttribute("currentTime");
             <li><m2:person name="${person.name}" age="${person.age}" /></li>
         </c:forEach>
         </ul>
+
+        <h5>Decorating tag</h5>
+        <m2:block>
+            <jsp:attribute name="title">
+                <h6>Custom title</h6>
+            </jsp:attribute>
+            <jsp:attribute name="content">
+                <p>Custom content here</p>
+            </jsp:attribute>
+        </m2:block>
+
+        <h5>Decorating tag 2</h5>
+        <m2:block>
+            <jsp:attribute name="title">
+                <h6>Custom title</h6>
+            </jsp:attribute>
+            <jsp:attribute name="content">
+                <p>Custom content here</p>
+                <m2:person name="loki2302" age="100" />
+                <p>End</p>
+            </jsp:attribute>
+        </m2:block>
     </body>
 </html>
