@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class CompletableFuturesTest {
@@ -84,5 +85,29 @@ public class CompletableFuturesTest {
                 (helloString, worldString) -> helloString + " " + worldString).get();
 
         assertEquals("hello world", helloWorldString);
+    }
+
+    @Test
+    public void canThrowExceptionsAsynchronously() throws InterruptedException {
+        CompletableFuture<Object> future = supplyAsync(() -> {
+            throw new RuntimeException("hello exception");
+        });
+
+        try {
+            future.get();
+            fail();
+        } catch (ExecutionException e) {
+            assertEquals("hello exception", e.getCause().getMessage());
+        }
+
+        try {
+            future.join();
+            fail();
+        } catch(CompletionException e) {
+            assertEquals("hello exception", e.getCause().getMessage());
+        }
+
+        assertTrue(future.isDone());
+        assertTrue(future.isCompletedExceptionally());
     }
 }
