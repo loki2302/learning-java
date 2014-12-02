@@ -11,7 +11,7 @@ import static org.junit.Assert.fail;
 
 public class CompletableFuturesTest {
     @Test
-    public void canSupplyAsynchronously() throws ExecutionException, InterruptedException {
+    public void canSupplyResultWithSupplier() throws ExecutionException, InterruptedException {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         CompletableFuture<String> future = supplyAsync(() -> {
             try {
@@ -21,6 +21,32 @@ public class CompletableFuturesTest {
 
             return "hello";
         });
+
+        try {
+            future.get(1, TimeUnit.MILLISECONDS);
+            fail();
+        } catch(TimeoutException e) {
+        }
+
+        countDownLatch.countDown();
+
+        String s = future.get();
+        assertEquals("hello", s);
+    }
+
+    @Test
+    public void canSupplyResultWithCompletableFutureComplete() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> future = new CompletableFuture<>();
+
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        new Thread(() -> {
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+            }
+
+            future.complete("hello");
+        }).start();
 
         try {
             future.get(1, TimeUnit.MILLISECONDS);
