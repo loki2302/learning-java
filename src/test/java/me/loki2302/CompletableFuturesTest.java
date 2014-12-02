@@ -105,6 +105,26 @@ public class CompletableFuturesTest {
     }
 
     @Test
+    public void dependentFutureThrowsWhenBothOfItsDependenciesThrow() throws InterruptedException {
+        CompletableFuture<String> helloFuture = supplyAsync(() -> {
+            throw new RuntimeException("hello exception");
+        });
+        CompletableFuture<String> worldFuture = supplyAsync(() -> {
+            throw new RuntimeException("world exception");
+        });
+
+        try {
+            helloFuture.thenCombineAsync(
+                    worldFuture,
+                    (helloString, worldString) -> helloString + " " + worldString).get();
+            fail();
+        } catch (ExecutionException e) {
+            String message = e.getCause().getMessage();
+            assertTrue(message.equals("hello exception") || message.equals("world exception"));
+        }
+    }
+
+    @Test
     public void canThrowExceptionsAsynchronously() throws InterruptedException {
         CompletableFuture<Object> future = supplyAsync(() -> {
             throw new RuntimeException("hello exception");

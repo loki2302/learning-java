@@ -15,3 +15,10 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
 }
+
+test {
+    testLogging {
+        showStandardStreams = true
+        events 'failed', 'passed', 'skipped'
+    }
+}
