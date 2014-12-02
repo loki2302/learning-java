@@ -3,6 +3,7 @@ package me.loki2302;
 import org.junit.Test;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static org.junit.Assert.assertEquals;
@@ -31,5 +32,22 @@ public class CompletableFuturesTest {
 
         String s = future.get();
         assertEquals("hello", s);
+    }
+
+    @Test
+    public void canUseSpecificExecutor() throws ExecutionException, InterruptedException {
+        AtomicInteger threadCount = new AtomicInteger();
+        Executor executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable runnable) {
+                threadCount.incrementAndGet();
+                return new Thread(runnable);
+            }
+        });
+
+        CompletableFuture<String> future = supplyAsync(() -> "hello", executor);
+        future.get();
+
+        assertEquals(1, threadCount.get());
     }
 }
