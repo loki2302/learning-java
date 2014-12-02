@@ -37,17 +37,26 @@ public class CompletableFuturesTest {
     @Test
     public void canUseSpecificExecutor() throws ExecutionException, InterruptedException {
         AtomicInteger threadCount = new AtomicInteger();
-        Executor executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable runnable) {
-                threadCount.incrementAndGet();
-                return new Thread(runnable);
-            }
+        Executor executor = Executors.newFixedThreadPool(1, runnable -> {
+            threadCount.incrementAndGet();
+            return new Thread(runnable);
         });
 
         CompletableFuture<String> future = supplyAsync(() -> "hello", executor);
         future.get();
 
         assertEquals(1, threadCount.get());
+    }
+
+    @Test
+    public void canWaitFor2Futures() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> helloFuture = supplyAsync(() -> "hello");
+        CompletableFuture<String> worldFuture = supplyAsync(() -> "world");
+
+        String helloWorldString = helloFuture.thenCombineAsync(
+                worldFuture,
+                (helloString, worldString) -> helloString + " " + worldString).get();
+
+        assertEquals("hello world", helloWorldString);
     }
 }
