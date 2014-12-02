@@ -88,6 +88,23 @@ public class CompletableFuturesTest {
     }
 
     @Test
+    public void dependentFutureThrowsWhenOneOfItsDependenciesThrow() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> helloFuture = supplyAsync(() -> "hello");
+        CompletableFuture<String> worldFuture = supplyAsync(() -> {
+            throw new RuntimeException("hello exception");
+        });
+
+        try {
+            helloFuture.thenCombineAsync(
+                    worldFuture,
+                    (helloString, worldString) -> helloString + " " + worldString).get();
+            fail();
+        } catch (ExecutionException e) {
+            assertEquals("hello exception", e.getCause().getMessage());
+        }
+    }
+
+    @Test
     public void canThrowExceptionsAsynchronously() throws InterruptedException {
         CompletableFuture<Object> future = supplyAsync(() -> {
             throw new RuntimeException("hello exception");
