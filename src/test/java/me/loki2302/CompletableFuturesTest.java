@@ -88,7 +88,7 @@ public class CompletableFuturesTest {
     }
 
     @Test
-    public void dependentFutureThrowsWhenOneOfItsDependenciesThrow() throws ExecutionException, InterruptedException {
+    public void dependentFutureThrowsWhenOneOfItsDependenciesThrow() throws InterruptedException {
         CompletableFuture<String> helloFuture = supplyAsync(() -> "hello");
         CompletableFuture<String> worldFuture = supplyAsync(() -> {
             throw new RuntimeException("hello exception");
