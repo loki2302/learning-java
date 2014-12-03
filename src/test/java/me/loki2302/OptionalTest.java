@@ -71,6 +71,18 @@ public class OptionalTest {
     }
 
     @Test
+    public void canUseMap() {
+        // empty, because source value is empty
+        assertEquals(Optional.empty(), Optional.<String>ofNullable(null).map(s -> s + "!"));
+
+        // not empty, because source value is not empty and result is not empty
+        assertEquals(Optional.of("hello!"), Optional.ofNullable("hello").map(s -> s + "!"));
+
+        // empty, because result is null and gets translated to empty
+        assertEquals(Optional.empty(), Optional.<String>ofNullable(null).map(s -> null));
+    }
+
+    @Test
     public void canUseIfPresent() {
         final Integer[] x = { null };
         Optional.<Integer>ofNullable(null).ifPresent(i -> {
