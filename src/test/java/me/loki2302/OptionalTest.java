@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
@@ -98,9 +97,22 @@ public class OptionalTest {
 
     @Test
     public void canUseOrElse() {
-        Function<String, String> getOriginalOrEmpty = s -> Optional.ofNullable(s).orElse("<empty>");
+        assertEquals("hello", Optional.of("hello").orElse("<empty>"));
+        assertEquals("<empty>", Optional.ofNullable(null).orElse("<empty>"));
+    }
 
-        assertEquals("hello", getOriginalOrEmpty.apply("hello"));
-        assertEquals("<empty>", getOriginalOrEmpty.apply(null));
+    @Test
+    public void canUseOrElseGet() {
+        assertEquals("hello", Optional.of("hello").orElseGet(() -> "<empty>"));
+        assertEquals("<empty>", Optional.empty().orElseGet(() -> "<empty>"));
+    }
+
+    @Test
+    public void canUseOrElseThrow() {
+        try {
+            Optional.empty().orElseThrow(() -> new RuntimeException("hello"));
+        } catch (RuntimeException e) {
+            assertEquals("hello", e.getMessage());
+        }
     }
 }
