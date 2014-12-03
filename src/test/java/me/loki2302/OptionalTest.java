@@ -71,6 +71,20 @@ public class OptionalTest {
     }
 
     @Test
+    public void canUseIfPresent() {
+        final Integer[] x = { null };
+        Optional.<Integer>ofNullable(null).ifPresent(i -> {
+            x[0] = i;
+        });
+        assertNull(x[0]);
+
+        Optional.of(123).ifPresent(i -> {
+            x[0] = i;
+        });
+        assertEquals(123, (int)x[0]);
+    }
+
+    @Test
     public void canUseOrElse() {
         Function<String, String> getOriginalOrEmpty = s -> Optional.ofNullable(s).orElse("<empty>");
 
