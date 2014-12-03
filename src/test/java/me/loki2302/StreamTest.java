@@ -27,4 +27,13 @@ public class StreamTest {
         int sum = numbers.stream().reduce(0, (s, x) -> s + x);
         assertEquals(6, sum);
     }
+
+    @Test
+    public void canUseFilter() {
+        List<Integer> numbers = Arrays.asList(1, 2, 3);
+        List<Integer> oddNumbers = numbers.stream().filter(n -> n % 2 != 0).collect(Collectors.toList());
+        assertEquals(2, oddNumbers.size());
+        assertEquals(1, (int)oddNumbers.get(0));
+        assertEquals(3, (int)oddNumbers.get(1));
+    }
 }
