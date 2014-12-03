@@ -58,6 +58,19 @@ public class OptionalTest {
     }
 
     @Test
+    public void canUseFlatMap() {
+        // empty, because there's not value at all
+        Optional<Integer> optional = Optional.ofNullable(null);
+        Optional<Integer> flatMappedOptional = optional.flatMap(i -> Optional.of(i * 2));
+        assertEquals(Optional.empty(), flatMappedOptional);
+
+        // not empty, because there's a value
+        optional = Optional.of(1);
+        flatMappedOptional = optional.flatMap(i -> Optional.of(i * 2));
+        assertEquals(Optional.of(2), flatMappedOptional);
+    }
+
+    @Test
     public void canUseOrElse() {
         Function<String, String> getOriginalOrEmpty = s -> Optional.ofNullable(s).orElse("<empty>");
 
