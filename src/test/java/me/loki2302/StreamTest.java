@@ -5,20 +5,37 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
 public class StreamTest {
     @Test
     public void canUseMap() {
-        List<Integer> numbers = Arrays.asList(1, 2, 3);
-        List<Integer> doubledNumbers = numbers.stream()
+        Stream<Integer> numbers = Stream.of(1, 2, 3);
+        List<Integer> doubledNumbers = numbers
                 .map(x -> 2 * x)
                 .collect(Collectors.toList());
         assertEquals(3, doubledNumbers.size());
         assertEquals(2, (int)doubledNumbers.get(0));
         assertEquals(4, (int)doubledNumbers.get(1));
         assertEquals(6, (int)doubledNumbers.get(2));
+    }
+
+    @Test
+    public void canUseFlatMap() {
+        Stream<List<Integer>> lists = Stream.of(
+                Arrays.asList(1, 2, 3),
+                Arrays.asList(4, 5));
+        List<Integer> numbers = lists
+                .flatMap(list -> list.stream())
+                .collect(Collectors.toList());
+        assertEquals(5, numbers.size());
+        assertEquals(1, (int)numbers.get(0));
+        assertEquals(2, (int)numbers.get(1));
+        assertEquals(3, (int)numbers.get(2));
+        assertEquals(4, (int)numbers.get(3));
+        assertEquals(5, (int)numbers.get(4));
     }
 
     @Test
