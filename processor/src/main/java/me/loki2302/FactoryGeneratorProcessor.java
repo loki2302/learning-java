@@ -4,15 +4,13 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Set;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 import org.stringtemplate.v4.ST;
@@ -25,13 +23,13 @@ public class FactoryGeneratorProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         STGroup templateGroup = new STGroupFile("processor.stg");
-        
-        System.out.println(annotations);
-        
         for(Element elem : roundEnv.getElementsAnnotatedWith(GenerateFactory.class)) {
-            System.out.println(elem.getSimpleName());
-            
             if(elem.getKind() == ElementKind.CLASS) {
+                Messager messager = processingEnv.getMessager();
+                messager.printMessage(Diagnostic.Kind.NOTE, "**********************************");
+                messager.printMessage(Diagnostic.Kind.NOTE, "Generating factory for " + elem.getSimpleName());
+                messager.printMessage(Diagnostic.Kind.NOTE, "**********************************");
+
                 TypeElement classElement = (TypeElement)elem;
                 PackageElement packageElement = (PackageElement)classElement.getEnclosingElement();
                 try {
