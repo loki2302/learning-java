@@ -6,7 +6,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 public class ClickCountController {
-    private IntegerProperty clickCountProperty = new SimpleIntegerProperty(0);
+    private IntegerProperty clickCountProperty = new SimpleIntegerProperty(-1);
+
+    public ClickCountController(int initialClickCount) {
+        setClickCount(initialClickCount);
+    }
 
     @FXML
     public void addOneClicked(ActionEvent e) {
