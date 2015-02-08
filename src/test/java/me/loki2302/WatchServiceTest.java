@@ -6,51 +6,95 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.HashSet;
+import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class WatchServiceTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    // TODO: rewrite more clearly
-
     @Test
-    public void dummy() throws IOException {
+    public void dummy() throws IOException, InterruptedException {
         temporaryFolder.create();
         Path temporaryFolderPath = temporaryFolder.getRoot().toPath();
 
-        try(WatchService watchService = FileSystems.getDefault().newWatchService()) {
-            WatchKey watchKey = temporaryFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+        Watcher watcher = new Watcher(temporaryFolderPath);
+        watcher.start();
+        Thread.sleep(1000); // let it start and subscribe, TODO: wait synchronously inside start()
 
-            String tempFilename = temporaryFolder.newFile().getName();
+        try {
+            Path tempFilePath = temporaryFolder.newFile().toPath();
+            Thread.sleep(1000); // give it sometime to discover an event
 
-            boolean found = false;
-            while(!found) {
-                for (WatchEvent<?> event : watchKey.pollEvents()) {
-                    WatchEvent.Kind<?> kind = event.kind();
+            assertEquals(1, watcher.getFiles().size());
+            assertEquals(tempFilePath.getFileName(), watcher.getFiles().stream().findFirst().get().getFileName());
+        } finally {
+            watcher.stop();
+        }
+    }
 
-                    if (kind == StandardWatchEventKinds.OVERFLOW) {
-                        System.out.println("overflow");
-                        continue;
-                    }
+    public static class Watcher {
+        private final Path path;
+        private volatile boolean shouldStop;
+        private Thread workerThread;
+        private Set<Path> files = new HashSet<>();
 
-                    WatchEvent<Path> e = (WatchEvent<Path>) event;
-                    System.out.printf("%s\n", e.context());
-                    if(e.context().endsWith(tempFilename)) {
-                        found = true;
-                    }
+        public Watcher(Path path) {
+            this.path = path;
+        }
 
-                    break; // temporary
-                }
+        public Set<Path> getFiles() {
+            return files;
+        }
 
-                boolean valid = watchKey.reset();
-                if(!valid) {
-                    break;
-                }
+        public void start() {
+            if(workerThread != null) {
+                throw new RuntimeException();
             }
 
-            assertTrue(found);
+            workerThread = new Thread(() -> {
+                try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
+                    WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+                    while (!shouldStop) {
+                        for (WatchEvent<?> event : watchKey.pollEvents()) {
+                            WatchEvent.Kind<?> kind = event.kind();
+
+                            if (kind == StandardWatchEventKinds.OVERFLOW) {
+                                System.out.println("overflow");
+                                continue;
+                            }
+
+                            WatchEvent<Path> e = (WatchEvent<Path>) event;
+                            files.add(e.context());
+                        }
+
+                        boolean valid = watchKey.reset();
+                        if (!valid) {
+                            break;
+                        }
+                    }
+
+                    shouldStop = false;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            files.clear();
+            workerThread.start();
+        }
+
+        public void stop() throws InterruptedException {
+            if(workerThread == null) {
+                throw new RuntimeException();
+            }
+
+            shouldStop = true;
+            workerThread.join();
+            workerThread = null;
         }
     }
 }
