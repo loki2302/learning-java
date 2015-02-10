@@ -8,9 +8,10 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class WatchServiceTest {
     @Rule
@@ -23,7 +24,6 @@ public class WatchServiceTest {
 
         Watcher watcher = new Watcher(temporaryFolderPath);
         watcher.start();
-        Thread.sleep(1000); // let it start and subscribe, TODO: wait synchronously inside start()
 
         try {
             Path tempFilePath = temporaryFolder.newFile().toPath();
@@ -55,9 +55,18 @@ public class WatchServiceTest {
                 throw new RuntimeException();
             }
 
+            CyclicBarrier startCyclicBarrier = new CyclicBarrier(2);
             workerThread = new Thread(() -> {
                 try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
                     WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+                    try {
+                        startCyclicBarrier.await();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (BrokenBarrierException e) {
+                        throw new RuntimeException(e);
+                    }
+
                     while (!shouldStop) {
                         for (WatchEvent<?> event : watchKey.pollEvents()) {
                             WatchEvent.Kind<?> kind = event.kind();
@@ -85,6 +94,14 @@ public class WatchServiceTest {
 
             files.clear();
             workerThread.start();
+
+            try {
+                startCyclicBarrier.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException();
+            } catch (BrokenBarrierException e) {
+                throw new RuntimeException();
+            }
         }
 
         public void stop() throws InterruptedException {
