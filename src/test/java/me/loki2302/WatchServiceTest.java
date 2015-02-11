@@ -4,7 +4,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -57,6 +59,30 @@ public class WatchServiceTest {
         }
     }
 
+    @Test
+    public void canDiscoverFileEditing() throws InterruptedException, IOException {
+        temporaryFolder.create();
+        Path temporaryFolderPath = temporaryFolder.getRoot().toPath();
+
+        Path tempFilePath = temporaryFolder.newFile().toPath();
+
+        Watcher watcher = new Watcher(temporaryFolderPath);
+        watcher.start();
+
+        try {
+            try(Writer writer = new FileWriter(tempFilePath.toFile())) {
+                writer.write("hello");
+            }
+
+            Thread.sleep(1000); // give it sometime to discover an event
+
+            assertEquals(1, watcher.getFiles().size());
+            assertEquals(tempFilePath.getFileName(), watcher.getFiles().stream().findFirst().get().getFileName());
+        } finally {
+            watcher.stop();
+        }
+    }
+
     public static class Watcher {
         private final Path path;
         private volatile boolean shouldStop;
@@ -81,7 +107,8 @@ public class WatchServiceTest {
                 try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
                     WatchKey watchKey = path.register(watchService,
                             StandardWatchEventKinds.ENTRY_CREATE,
-                            StandardWatchEventKinds.ENTRY_DELETE);
+                            StandardWatchEventKinds.ENTRY_DELETE,
+                            StandardWatchEventKinds.ENTRY_MODIFY);
                     try {
                         startCyclicBarrier.await();
                     } catch (InterruptedException e) {
