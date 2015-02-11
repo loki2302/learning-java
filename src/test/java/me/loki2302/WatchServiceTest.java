@@ -18,7 +18,7 @@ public class WatchServiceTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void dummy() throws IOException, InterruptedException {
+    public void canDiscoverFileCreation() throws IOException, InterruptedException {
         temporaryFolder.create();
         Path temporaryFolderPath = temporaryFolder.getRoot().toPath();
 
@@ -27,6 +27,27 @@ public class WatchServiceTest {
 
         try {
             Path tempFilePath = temporaryFolder.newFile().toPath();
+            Thread.sleep(1000); // give it sometime to discover an event
+
+            assertEquals(1, watcher.getFiles().size());
+            assertEquals(tempFilePath.getFileName(), watcher.getFiles().stream().findFirst().get().getFileName());
+        } finally {
+            watcher.stop();
+        }
+    }
+
+    @Test
+    public void canDiscoverFileDeletion() throws IOException, InterruptedException {
+        temporaryFolder.create();
+        Path temporaryFolderPath = temporaryFolder.getRoot().toPath();
+
+        Path tempFilePath = temporaryFolder.newFile().toPath();
+
+        Watcher watcher = new Watcher(temporaryFolderPath);
+        watcher.start();
+
+        try {
+            tempFilePath.toFile().delete();
             Thread.sleep(1000); // give it sometime to discover an event
 
             assertEquals(1, watcher.getFiles().size());
@@ -58,7 +79,9 @@ public class WatchServiceTest {
             CyclicBarrier startCyclicBarrier = new CyclicBarrier(2);
             workerThread = new Thread(() -> {
                 try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
-                    WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+                    WatchKey watchKey = path.register(watchService,
+                            StandardWatchEventKinds.ENTRY_CREATE,
+                            StandardWatchEventKinds.ENTRY_DELETE);
                     try {
                         startCyclicBarrier.await();
                     } catch (InterruptedException e) {
