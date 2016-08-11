@@ -1,4 +1,4 @@
-package me.loki2302;
+package loki2302;
 
 /**
  * Represents addition algorithm

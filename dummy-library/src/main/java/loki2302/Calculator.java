@@ -1,4 +1,4 @@
-package me.loki2302;
+package loki2302;
 
 /**
  * Represents a calculator.
@@ -30,6 +30,12 @@ public class Calculator {
         return adder.add(a, b);
     }
 
+    /**
+     * Calculates a difference of 2 integers
+     * @param a first integer
+     * @param b second integers
+     * @return the difference of a and b
+     */
     public int subtractNumbers(int a, int b) {
         return subtractor.subtract(a, b);
     }
