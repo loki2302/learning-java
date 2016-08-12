@@ -3,7 +3,6 @@ package me.loki2302;
 import com.sun.javadoc.*;
 import com.sun.tools.doclets.standard.Standard;
 
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class DummyDoclet {
