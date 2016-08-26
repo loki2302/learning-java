@@ -10,9 +10,69 @@
                 color: black;
                 font-size: 13pt;
             }
+
+            table {
+                border: 1px solid #333333;
+            }
+
+            .header1 td {
+                background-color: #ffcc00;
+                color: #ffffff;
+            }
+
+            .header2 td {
+                background-color: #ffcc00;
+                color: #ffffff;
+            }
+
+            .code td {
+                background-color: #cccccc;
+                color: #333333;
+            }
+
+            .description {
+                color: #333333;
+            }
         </style>
     </head>
     <body>
+
+    <% for each (var clazz in classes) { %>
+    <table width="50%">
+        <tr class="header1">
+            <td>Class <%= clazz.name %></td>
+        </tr>
+        <tr class="code">
+            <td><%= clazz.modifiers %> <%= clazz.isClass ? "class" : "interface" %> <%= clazz.name %></td>
+        </tr>
+        <tr class="description">
+            <td><%= clazz.comment %></td>
+        </tr>
+        <tr class="header2">
+            <td>Methods</td>
+        </tr>
+        <% for each (var method in clazz.methods) { %>
+        <tr class="code">
+            <td><%= method.name %><%= method.signature %></td>
+        </tr>
+        <tr class="description">
+            <td><%= method.comment %></td>
+        </tr>
+        <tr class="description">
+            <td rowspan="3" style="width: 30%">Parameters</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>1</td>
+        </tr>
+        <% } %>
+    </table>
+    <br/>
+    <% } %>
+
     <% for each (var clazz in classes) { %>
         <p class="method"><%= clazz.name %> <span class="comment">(<%= clazz.comment %>)</span></p>
 

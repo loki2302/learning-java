@@ -36,10 +36,13 @@ public class DocxDoclet {
         String template = Resources.toString(templateUrl, Charsets.UTF_8);
 
         List<ClassModel> classModels = Stream.of(rootDoc.classes()).map(classDoc -> new ClassModel(
+                classDoc.modifiers(),
+                classDoc.isClass(),
                 classDoc.name(),
                 classDoc.commentText(),
                 Stream.of(classDoc.methods()).map(methodDoc -> new MethodModel(
                         methodDoc.name(),
+                        methodDoc.flatSignature(),
                         methodDoc.commentText(),
                         Stream.of(methodDoc.paramTags()).map(parameterTag -> new ParameterModel(
                                 parameterTag.parameterName(),
@@ -78,11 +81,15 @@ public class DocxDoclet {
     }
 
     public static class ClassModel {
+        public String modifiers;
+        public boolean isClass;
         public String name;
         public String comment;
         public List<MethodModel> methods;
 
-        public ClassModel(String name, String comment, List<MethodModel> methods) {
+        public ClassModel(String modifiers, boolean isClass, String name, String comment, List<MethodModel> methods) {
+            this.modifiers = modifiers;
+            this.isClass = isClass;
             this.name = name;
             this.comment = comment;
             this.methods = methods;
@@ -91,11 +98,13 @@ public class DocxDoclet {
 
     public static class MethodModel {
         public String name;
+        public String signature;
         public String comment;
         public List<ParameterModel> parameters;
 
-        public MethodModel(String name, String comment, List<ParameterModel> parameters) {
+        public MethodModel(String name, String signature, String comment, List<ParameterModel> parameters) {
             this.name = name;
+            this.signature = signature;
             this.comment = comment;
             this.parameters = parameters;
         }
