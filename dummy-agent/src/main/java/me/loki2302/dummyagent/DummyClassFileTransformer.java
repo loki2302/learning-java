@@ -9,6 +9,14 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 public class DummyClassFileTransformer implements ClassFileTransformer {
+    private final DummyAgent dummyAgent;
+    private final String filterClassPrefix;
+
+    public DummyClassFileTransformer(DummyAgent dummyAgent, String filterClassPrefix) {
+        this.dummyAgent = dummyAgent;
+        this.filterClassPrefix = filterClassPrefix;
+    }
+
     @Override
     public byte[] transform(
             ClassLoader classLoader,
@@ -18,7 +26,7 @@ public class DummyClassFileTransformer implements ClassFileTransformer {
             byte[] bytes) throws IllegalClassFormatException {
 
         String javaClassName = toJavaName(className);
-        if(javaClassName.equals("me.loki2302.App")) {
+        if(javaClassName.startsWith(filterClassPrefix)) {
             System.out.printf("Processing %s\n", javaClassName);
 
             try {
@@ -26,8 +34,11 @@ public class DummyClassFileTransformer implements ClassFileTransformer {
                 CtClass ctClass = classPool.get(javaClassName);
                 CtMethod[] declaredMethods = ctClass.getDeclaredMethods();
                 for(CtMethod ctMethod : declaredMethods) {
-                    ctMethod.insertBefore("System.out.println(\"BEFORE " + ctMethod.getLongName() + "\");");
-                    ctMethod.insertAfter("System.out.println(\"AFTER " + ctMethod.getLongName() + "\");");
+                    String logBefore = dummyAgent.getLogBeforeCode(ctMethod.getName());
+                    ctMethod.insertBefore(logBefore);
+
+                    String logAfter = dummyAgent.getLogAfterCode(ctMethod.getName());
+                    ctMethod.insertAfter(logAfter);
                 }
                 bytes = ctClass.toBytecode();
                 ctClass.detach();

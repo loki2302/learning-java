@@ -16,6 +16,6 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'premain-class': 'me.loki2302.dummyagent.DummyAgent'
+        attributes 'premain-class': 'me.loki2302.dummyagent.PreMain'
     }
 }

@@ -21,5 +21,5 @@ dependencies {
 }
 
 run {
-    jvmArgs '-javaagent:' + project.configurations.runtime.find { it.name.startsWith('dummy-agent') }
+    jvmArgs '-javaagent:' + project.configurations.runtime.find { it.name.startsWith('dummy-agent') } + '=me.loki2302.'
 }
