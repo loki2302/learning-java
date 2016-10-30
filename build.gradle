@@ -17,9 +17,9 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile project(':dummy-agent')
+    runtime project(':dummy-agent')
 }
 
 run {
-    jvmArgs '-javaagent:' + project.configurations.compile.find { it.name.startsWith('dummy-agent') }
+    jvmArgs '-javaagent:' + project.configurations.runtime.find { it.name.startsWith('dummy-agent') }
 }
