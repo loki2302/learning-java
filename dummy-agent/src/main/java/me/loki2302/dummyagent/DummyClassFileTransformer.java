@@ -17,15 +17,15 @@ public class DummyClassFileTransformer implements ClassFileTransformer {
             ProtectionDomain protectionDomain,
             byte[] bytes) throws IllegalClassFormatException {
 
-        if(className.equals("me/loki2302/App")) {
-            System.out.printf("me.loki2302.dummyagent.DummyClassFileTransformer className=%s\n", className);
+        String javaClassName = toJavaName(className);
+        if(javaClassName.equals("me.loki2302.App")) {
+            System.out.printf("Processing %s\n", javaClassName);
 
             try {
                 ClassPool classPool = ClassPool.getDefault();
-                CtClass ctClass = classPool.get("me.loki2302.App");
+                CtClass ctClass = classPool.get(javaClassName);
                 CtMethod[] declaredMethods = ctClass.getDeclaredMethods();
                 for(CtMethod ctMethod : declaredMethods) {
-                    //CtMethod ctMethod = ctClass.getDeclaredMethod("main");
                     ctMethod.insertBefore("System.out.println(\"BEFORE " + ctMethod.getLongName() + "\");");
                     ctMethod.insertAfter("System.out.println(\"AFTER " + ctMethod.getLongName() + "\");");
                 }
@@ -37,5 +37,9 @@ public class DummyClassFileTransformer implements ClassFileTransformer {
         }
 
         return bytes;
+    }
+
+    private static String toJavaName(String className) {
+        return className.replace('/', '.');
     }
 }
