@@ -12,7 +12,6 @@ import com.sun.jdi.request.MethodExitRequest;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 public class App {
@@ -51,7 +50,6 @@ public class App {
             classPrepareRequest.addClassFilter("me.loki2302.dummy.*");
             classPrepareRequest.setEnabled(true);
 
-            List<String> classFilters = Arrays.asList("me.loki2302.dummy.*", "java.io.PrintStream");
             Arrays.asList("me.loki2302.dummy.*", "java.io.PrintStream").forEach(classFilter -> {
                 MethodEntryRequest methodEntryRequest = eventRequestManager.createMethodEntryRequest();
                 methodEntryRequest.addClassFilter(classFilter);
