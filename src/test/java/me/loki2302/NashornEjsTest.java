@@ -2,17 +2,11 @@ package me.loki2302;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.nashorn.api.scripting.JSObject;
-import jdk.nashorn.internal.runtime.JSONFunctions;
 import org.junit.Test;
 
-import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,7 +22,7 @@ public class NashornEjsTest {
     }
 
     @Test
-    public void canUseEjsConveniently() throws ScriptException, JsonProcessingException {
+    public void canUseEjsConvenientlyViaSerialization() throws ScriptException, JsonProcessingException {
         Person person = new Person("loki2302");
         String personJson = new ObjectMapper().writeValueAsString(person);
 
@@ -38,6 +32,20 @@ public class NashornEjsTest {
         scriptEngine.eval("window = {}");
         scriptEngine.eval("load('classpath:META-INF/resources/webjars/ejs/2.4.1/ejs-v2.4.1/ejs.js')");
         String result = (String)scriptEngine.eval("window.ejs.render('<p><%= name %></p>', JSON.parse(modelJson))");
+        assertEquals("<p>loki2302</p>", result);
+    }
+
+    @Test
+    public void canUseEjsConvenientlyViaObjectBindProperties() throws ScriptException, JsonProcessingException {
+        Person person = new Person("loki2302");
+
+        ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+        ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("nashorn");
+        scriptEngine.put("person", person);
+        scriptEngine.eval("var personProxy = Object.bindProperties({}, person)");
+        scriptEngine.eval("window = {}");
+        scriptEngine.eval("load('classpath:META-INF/resources/webjars/ejs/2.4.1/ejs-v2.4.1/ejs.js')");
+        String result = (String)scriptEngine.eval("window.ejs.render('<p><%= name %></p>', personProxy)");
         assertEquals("<p>loki2302</p>", result);
     }
 
