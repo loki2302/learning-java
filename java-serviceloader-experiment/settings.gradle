@@ -1,0 +1,6 @@
+rootProject.name = 'java-serviceloader-experiment'
+include 'codec-a'
+include 'codec-api'
+include 'app'
+include 'codec-b'
+
