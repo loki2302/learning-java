@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <style>
+            .method {
+                color: red;
+                font-size: 20pt;
+            }
+
+            .method .comment {
+                color: black;
+                font-size: 13pt;
+            }
+        </style>
+    </head>
+    <body>
+
+
+    <% for each (var clazz in classes) { %>
+        <p class="method"><%= clazz.name %> <span class="comment">(<%= clazz.comment %>)</span></p>
+
+        <% for each (var method in clazz.methods) { %>
+            <p style="color:green"><%= method.name %> (<%= method.comment %>)</p>
+
+            <% for each (var parameter in method.parameters) { %>
+                <p style="color:blue"><%= parameter.name %> (<%= parameter.comment %>)</p>
+            <% } %>
+        <% } %>
+    <% } %>
+    </body>
+</html>
