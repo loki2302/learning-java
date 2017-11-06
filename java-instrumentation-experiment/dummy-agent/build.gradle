@@ -1,0 +1,21 @@
+group 'me.loki2302'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile group: 'org.javassist', name: 'javassist', version: '3.21.0-GA'
+}
+
+jar {
+    manifest {
+        attributes 'premain-class': 'me.loki2302.dummyagent.PreMain'
+    }
+}

@@ -1,0 +1,3 @@
+rootProject.name = 'java-instrumentation-experiment'
+include 'dummy-agent'
+
