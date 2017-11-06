@@ -1,0 +1,14 @@
+.label {
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-text-fill: orange;
+}
+
+.button {
+    -fx-font-size: 30px;
+    -fx-text-fill: red;
+}
+
+.grid-pane {
+    -fx-background-color: #333333;
+}
