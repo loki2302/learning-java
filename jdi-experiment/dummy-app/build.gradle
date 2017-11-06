@@ -1,0 +1,21 @@
+group 'me.loki2302'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+mainClassName = 'me.loki2302.dummy.App'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+}

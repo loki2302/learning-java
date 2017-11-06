@@ -1,0 +1,21 @@
+group 'me.loki2302'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+mainClassName = 'me.loki2302.debugger.App'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile files(org.gradle.internal.jvm.Jvm.current().toolsJar)
+    runtime project(':dummy-app')
+}
+
+run {
+    systemProperty 'dummyAppJarPath', project.configurations.runtime.find { it.name.startsWith('dummy-app') }
+}

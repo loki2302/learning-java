@@ -1,0 +1,4 @@
+rootProject.name = 'jdi-experiment'
+include 'dummy-app'
+include 'debugger'
+
