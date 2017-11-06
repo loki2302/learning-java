@@ -1,0 +1,12 @@
+group processor;
+
+factoryClass(packageName, className) ::= <<
+package <packageName>;
+
+// generated
+public class <className>Factory {
+	public <className> make() {
+		return new <className>();
+	}
+}
+>>
