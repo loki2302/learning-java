@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 public class IteratorTest {
     @Test
-    public void canUseListIterator() {
+    public void canUseIterator() {
         List<Integer> items = Arrays.asList(11, 22, 33);
         Iterator<Integer> it = items.iterator();
         assertTrue(it.hasNext());
