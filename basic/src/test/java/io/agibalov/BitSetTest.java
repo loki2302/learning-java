@@ -1,10 +1,10 @@
-package me.loki2302;
+package io.agibalov;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.BitSet;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class BitSetTest {
     @Test

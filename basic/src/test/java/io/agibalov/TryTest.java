@@ -1,8 +1,8 @@
-package me.loki2302;
+package io.agibalov;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TryTest {
     @Test
@@ -33,7 +33,7 @@ public class TryTest {
         public ResourceState resourceState;
     }
 
-    private static enum ResourceState {
+    private enum ResourceState {
         Initialized,
         Destroyed
     }

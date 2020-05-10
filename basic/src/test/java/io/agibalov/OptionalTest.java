@@ -1,11 +1,11 @@
-package me.loki2302;
+package io.agibalov;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OptionalTest {
     @Test

@@ -1,8 +1,7 @@
-package me.loki2302;
+package io.agibalov;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,71 +12,59 @@ import java.util.Set;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WatchServiceTest {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
     @Test
-    public void canDiscoverFileCreation() throws IOException, InterruptedException {
-        temporaryFolder.create();
-        Path temporaryFolderPath = temporaryFolder.getRoot().toPath();
-
-        Watcher watcher = new Watcher(temporaryFolderPath);
+    public void canDiscoverFileCreation(@TempDir Path tempDir) throws IOException, InterruptedException {
+        Watcher watcher = new Watcher(tempDir);
         watcher.start();
 
         try {
-            Path tempFilePath = temporaryFolder.newFile().toPath();
+            Path filePath = tempDir.resolve("1.txt");
+            Files.writeString(filePath, "hello there");
             Thread.sleep(1000); // give it sometime to discover an event
 
             assertEquals(1, watcher.getFiles().size());
-            assertEquals(tempFilePath.getFileName(), watcher.getFiles().stream().findFirst().get().getFileName());
+            assertEquals(filePath.getFileName(), watcher.getFiles().stream().findFirst().get().getFileName());
         } finally {
             watcher.stop();
         }
     }
 
     @Test
-    public void canDiscoverFileDeletion() throws IOException, InterruptedException {
-        temporaryFolder.create();
-        Path temporaryFolderPath = temporaryFolder.getRoot().toPath();
+    public void canDiscoverFileDeletion(@TempDir Path tempDir) throws IOException, InterruptedException {
+        Path filePath = tempDir.resolve("1.txt");
+        Files.writeString(filePath, "hello there");
 
-        Path tempFilePath = temporaryFolder.newFile().toPath();
-
-        Watcher watcher = new Watcher(temporaryFolderPath);
+        Watcher watcher = new Watcher(tempDir);
         watcher.start();
 
         try {
-            tempFilePath.toFile().delete();
+            filePath.toFile().delete();
             Thread.sleep(1000); // give it sometime to discover an event
 
             assertEquals(1, watcher.getFiles().size());
-            assertEquals(tempFilePath.getFileName(), watcher.getFiles().stream().findFirst().get().getFileName());
+            assertEquals(filePath.getFileName(), watcher.getFiles().stream().findFirst().get().getFileName());
         } finally {
             watcher.stop();
         }
     }
 
     @Test
-    public void canDiscoverFileEditing() throws InterruptedException, IOException {
-        temporaryFolder.create();
-        Path temporaryFolderPath = temporaryFolder.getRoot().toPath();
+    public void canDiscoverFileEditing(@TempDir Path tempDir) throws InterruptedException, IOException {
+        Path filePath = tempDir.resolve("1.txt");
+        Files.writeString(filePath, "hello there");
 
-        Path tempFilePath = temporaryFolder.newFile().toPath();
-
-        Watcher watcher = new Watcher(temporaryFolderPath);
+        Watcher watcher = new Watcher(tempDir);
         watcher.start();
 
         try {
-            try(Writer writer = new FileWriter(tempFilePath.toFile())) {
-                writer.write("hello");
-            }
-
+            Files.writeString(filePath, "omg");
             Thread.sleep(1000); // give it sometime to discover an event
 
             assertEquals(1, watcher.getFiles().size());
-            assertEquals(tempFilePath.getFileName(), watcher.getFiles().stream().findFirst().get().getFileName());
+            assertEquals(filePath.getFileName(), watcher.getFiles().stream().findFirst().get().getFileName());
         } finally {
             watcher.stop();
         }

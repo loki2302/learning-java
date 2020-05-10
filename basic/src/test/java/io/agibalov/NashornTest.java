@@ -1,13 +1,13 @@
-package me.loki2302;
+package io.agibalov;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.script.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NashornTest {
     @Test
@@ -43,7 +43,7 @@ public class NashornTest {
         assertEquals(-1, jsCalculator.sub(2, 3));
     }
 
-    public static interface JSCalculator {
+    public interface JSCalculator {
         int add(int a, int b);
         int sub(int a, int b);
     }
